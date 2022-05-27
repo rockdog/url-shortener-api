@@ -1,4 +1,3 @@
-VIRTUALENV_RUN_TARGET = virtualenv_run
 VIRTUALENV_RUN_REQUIREMENTS = requirements.txt requirements-dev.txt
 
 .PHONY: all
