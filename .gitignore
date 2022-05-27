@@ -2,4 +2,5 @@
 *.py[cod]
 .pytest_cache
 .tox
+shortener.db
 virtualenv_run
