@@ -20,7 +20,7 @@ run-hooks: virtualenv_run
 	./virtualenv_run/bin/pre-commit run --all-files
 
 virtualenv_run: $(VIRTUALENV_RUN_REQUIREMENTS)
-	tox -e $(VIRTUALENV_RUN_TARGET)
+	tox
 
 .PHONY:
 clean: clean-cache
@@ -36,4 +36,5 @@ clean-cache:
 
 .PHONY:
 upgrade-requirements:
+	./virtualenv_run/bin/pre-commit autoupdate
 	upgrade-requirements --python python3.8
