@@ -1,0 +1,8 @@
+coverage
+flake8
+ipdb
+mock
+mypy
+pre-commit
+pytest
+requirements-tools
