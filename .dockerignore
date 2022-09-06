@@ -1,0 +1,10 @@
+# files
+.activate.sh
+.deactivate.sh
+.pre-commit.yaml
+.venv.touch
+pyproject.toml
+tox.ini
+
+# directories
+tests

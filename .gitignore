@@ -1,6 +1,7 @@
 .env
 *.py[cod]
 .coverage
+.mypy_cache
 .pytest_cache
 .tox
 shortener.db
