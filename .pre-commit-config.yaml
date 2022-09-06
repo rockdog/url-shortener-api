@@ -19,7 +19,7 @@ repos:
                 '--ignore=E121,E123,E126,E133,E203,E226,E231,E241,E242,E704,W503,W504,W505,W605'
             ]
     - repo: https://github.com/asottile/reorder_python_imports
-      rev: v3.1.0
+      rev: v3.8.2
       hooks:
           - id: reorder-python-imports
             args: [
@@ -28,12 +28,12 @@ repos:
                 --remove-import, from __future__ import unicode_literals
             ]
     - repo: https://github.com/asottile/pyupgrade
-      rev: v2.32.1
+      rev: v2.37.3
       hooks:
           - id: pyupgrade
             args: [--py3-plus]
     - repo: http://github.com/psf/black
-      rev: 22.3.0
+      rev: 22.8.0
       hooks:
           - id: black
             language_version: python3.8
