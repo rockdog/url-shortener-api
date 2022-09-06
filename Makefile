@@ -37,3 +37,7 @@ clean-cache:
 upgrade-requirements:
 	./virtualenv_run/bin/pre-commit autoupdate
 	upgrade-requirements --python python3.8
+
+.PHONY: run
+run:
+	uvicorn shortener.app:app --reload
