@@ -5,4 +5,5 @@ mock
 mypy
 pre-commit
 pytest
+requests
 requirements-tools
