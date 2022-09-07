@@ -1,6 +1,7 @@
 fastapi
 pydantic
 python-dotenv
+pytz
 sqlalchemy
 uvicorn
 validators
