@@ -3,6 +3,11 @@ def test_root(test_client):
     assert response.status_code == 200
 
 
+def test_list_urls(test_client):
+    response = test_client.get("/urls")
+    assert response.status_code == 200
+
+
 def test_create_invalid_url(test_client):
     body = {"target_url": "Foo"}
     response = test_client.post("/url", json=body)
