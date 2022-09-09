@@ -1,7 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
+from httpretty import httpretty
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from sqlalchemy import event
 from sqlalchemy.orm import sessionmaker
 
 from shortener import logic
@@ -11,11 +12,17 @@ from shortener.database import get_session
 from shortener.models import Base
 
 
+@pytest.fixture(autouse=True)  # noqa
+def disable_external_api_calls():
+    httpretty.enable()
+    yield
+    httpretty.disable()
+
+
 engine = create_engine(
     "sqlite:///./shortener_test.db",
     connect_args={"check_same_thread": False},
 )
-
 
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base.metadata.create_all(bind=engine)
@@ -33,21 +40,39 @@ app.dependency_overrides[get_session] = override_get_session
 
 
 @pytest.fixture(scope="session")
-def tables():
-    Base.metadata.create_all(engine)
-    yield
-    Base.metadata.drop_all(engine)
-
-
-@pytest.fixture
-def session(tables):
+def connection(request):
     connection = engine.connect()
+    return connection
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_db(connection, request):
+    Base.metadata.bind = connection
+    Base.metadata.create_all()
+
+    def teardown():
+        Base.metadata.drop_all()
+
+    request.addfinalizer(teardown)
+
+
+@pytest.fixture(autouse=True)
+def session(connection, request):
     transaction = connection.begin()
-    session = Session(bind=connection)
-    yield session
-    session.close()
-    transaction.rollback()
-    connection.close()
+    session = TestSessionLocal(bind=connection)
+    session.begin_nested()
+
+    @event.listens_for(session, "after_transaction_end")
+    def restart_savepoint(db_session, transaction):
+        if transaction.nested and not transaction._parent.nested:
+            session.expire_all()
+            session.begin_nested()
+
+    def teardown():
+        transaction.rollback()
+
+    request.addfinalizer(teardown)
+    return session
 
 
 @pytest.fixture(scope="session")
