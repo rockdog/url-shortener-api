@@ -44,9 +44,18 @@ def redirect_to_target_url(
         exc.raise_not_found(request)
 
 
-# @app.get("/admin/{secret_key}")
-# def manage_url():
-#     pass
+@app.get("/admin/{secret_key}")
+def manage_url(
+    secret_key: str,
+    request: Request,
+    session: Session = Depends(get_session),
+):
+    if url := logic.url.get_url_by(session, secret_key=secret_key):
+        url.url = url.key
+        url.admin_url = url.secret_key
+        return url
+    else:
+        exc.raise_not_found(request)
 
 
 # @app.delete("/admin/{secret_key}")
