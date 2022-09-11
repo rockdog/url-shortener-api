@@ -59,12 +59,13 @@ def redirect_to_target_url(
     session: Session = Depends(get_session),
 ):
     if url := logic.url.get_url_by(session, key=url_key):
+        logic.url.incr_url_clicks(session, url)
         return RedirectResponse(url.target_url)
     else:
         exc.raise_not_found(request)
 
 
-@app.get(routes.manage_url)
+@app.get(routes.manage_url, response_model=schemas.URLInfo)
 def manage_url(
     secret_key: str,
     request: Request,
@@ -76,6 +77,10 @@ def manage_url(
         exc.raise_not_found(request)
 
 
-# @app.delete("/admin/{secret_key}")
-# def delete_url():
-#     pass
+@app.delete(routes.manage_url)
+def delete_url(secret_key: str, request: Request, session: Session = Depends(get_session)):
+    if url := logic.url.deactivate_url_by(session, secret_key=secret_key):
+        message = f"Successfully deleted shortened URL for '{url.target_url}'"
+        return {"detail": message}
+    else:
+        exc.raise_not_found(request)

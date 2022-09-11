@@ -12,7 +12,7 @@ from shortener.database import get_session
 from shortener.models import Base
 
 
-@pytest.fixture(autouse=True)  # noqa
+@pytest.fixture(scope="session", autouse=True)  # noqa
 def disable_external_api_calls():
     httpretty.enable()
     yield
@@ -20,7 +20,8 @@ def disable_external_api_calls():
 
 
 engine = create_engine(
-    "sqlite:///./shortener_test.db",
+    "sqlite+pysqlite:///./shortener_test.db",
+    echo=True,
     connect_args={"check_same_thread": False},
 )
 
@@ -56,7 +57,7 @@ def setup_db(connection, request):
     request.addfinalizer(teardown)
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def session(connection, request):
     transaction = connection.begin()
     session = TestSessionLocal(bind=connection)

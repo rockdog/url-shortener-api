@@ -1,3 +1,6 @@
+from unittest import mock
+
+
 def test_root(test_client):
     response = test_client.get("/")
     assert response.status_code == 200
@@ -20,8 +23,10 @@ def test_create_url(test_client):
     assert response.status_code == 200
 
 
-def test_redirect_to_target_url(test_client, url):
+@mock.patch("shortener.logic.url.incr_url_clicks", autospec=True)
+def test_redirect_to_target_url(mock_incr_url_clicks, test_client, url):
     response = test_client.get(f"/{url.key}", allow_redirects=False)
+    mock_incr_url_clicks.assert_called_once()
     assert response.status_code == 307
 
 
@@ -42,4 +47,17 @@ def test_manage_url_with_key(test_client, url):
 
 def test_fail_to_manage_url(test_client):
     response = test_client.get("/admin/idontexist", allow_redirects=False)
+    assert response.status_code == 404
+
+
+@mock.patch("shortener.logic.url.deactivate_url_by", autospec=True)
+def test_delete_url(mock_deactivate_url_by, test_client, session, url):
+    mock_deactivate_url_by.return_value = url
+    response = test_client.delete(f"/admin/{url.secret_key}", allow_redirects=False)
+    mock_deactivate_url_by.assert_called_once_with(mock.ANY, secret_key=url.secret_key)
+    assert response.status_code == 200
+
+
+def test_fail_to_delete_url(test_client):
+    response = test_client.delete("/admin/idontexist", allow_redirects=False)
     assert response.status_code == 404

@@ -39,3 +39,20 @@ def test_get_url_by_secret_key(session, url):
 def test_get_url_by_multiple_args(session):
     with pytest.raises(ValueError):
         logic.url.get_url_by(session, key="foo", secret_key="bar")
+
+
+def test_deactivate_url_by_actice_url(session, url):
+    assert url.is_active
+    _url = logic.url.deactivate_url_by(session, secret_key=url.secret_key)
+    assert _url.id == url.id
+    assert not url.is_active
+
+
+def test_deactivate_url_by_unknown_key(session):
+    assert logic.url.deactivate_url_by(session, secret_key="foo") is None
+
+
+def test_incr_url_clicks(session, url):
+    clicks = url.clicks
+    logic.url.incr_url_clicks(session, url)
+    assert url.clicks == clicks + 1

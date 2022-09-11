@@ -41,3 +41,16 @@ def get_urls(session, limit: Optional[int] = None, offset: Optional[int] = None)
     if not offset:
         offset = DEFAULT_OFFSET
     return session.query(models.URL).order_by(desc(models.URL.created_at)).limit(limit).offset(0).all()
+
+
+def deactivate_url_by(session, secret_key: str) -> Optional[models.URL]:
+    if url := get_url_by(session, secret_key=secret_key):
+        url.is_active = False
+        session.commit()
+        return url
+
+
+def incr_url_clicks(session, url):
+    url.clicks += 1
+    session.commit()
+    return url
