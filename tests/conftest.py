@@ -20,9 +20,7 @@ def disable_external_api_calls():
 
 
 engine = create_engine(
-    "sqlite+pysqlite:///./shortener_test.db",
-    echo=True,
-    connect_args={"check_same_thread": False},
+    "postgresql://postgres:postgres@comastation:55432/shortener_test",
 )
 
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
