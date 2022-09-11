@@ -23,5 +23,5 @@ class URL(Base):
     target_url = Column(String, nullable=False, index=True)
     is_active = Column(Boolean, default=True)
     clicks = Column(Integer, default=0)
-    created_at = Column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
+    created_at = Column(DateTime(timezone=True), nullable=False, default=utc_now)
     updated_at = Column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
