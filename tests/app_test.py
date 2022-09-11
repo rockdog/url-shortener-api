@@ -10,13 +10,13 @@ def test_list_urls(test_client):
 
 def test_create_invalid_url(test_client):
     body = {"target_url": "Foo"}
-    response = test_client.post("/url", json=body)
+    response = test_client.post("/urls", json=body)
     assert response.status_code == 400
 
 
 def test_create_url(test_client):
     body = {"target_url": "https://example.com/"}
-    response = test_client.post("/url", json=body)
+    response = test_client.post("/urls", json=body)
     assert response.status_code == 200
 
 

@@ -1,7 +1,12 @@
 from typing import List
 from typing import Optional
 
+from sqlalchemy import desc
+
 from shortener import models
+
+DEFAULT_LIMIT = 100
+DEFAULT_OFFSET = 0
 
 
 def create_url(session, url, key: str, secret_key: str) -> models.URL:
@@ -13,11 +18,6 @@ def create_url(session, url, key: str, secret_key: str) -> models.URL:
     session.add(_url)
     session.commit()
     session.refresh(_url)
-
-    # TODO(remove this)
-    _url.url = _url.key
-    _url.admin_url = _url.secret_key
-
     return _url
 
 
@@ -35,13 +35,9 @@ def get_url_by(session, key: Optional[str] = None, secret_key: Optional[str] = N
     return query.first()
 
 
-def get_urls(session) -> List[models.URL]:
-    # TODO(pagination, order)
-    result = []
-    _urls = session.query(models.URL).all()
-    for url in _urls:
-        # TODO(remove this)
-        url.url = url.key
-        url.admin_url = url.secret_key
-        result.append(url)
-    return result
+def get_urls(session, limit: Optional[int] = None, offset: Optional[int] = None) -> List[models.URL]:
+    if not limit:
+        limit = DEFAULT_LIMIT
+    if not offset:
+        offset = DEFAULT_OFFSET
+    return session.query(models.URL).order_by(desc(models.URL.created_at)).limit(limit).offset(0).all()
