@@ -13,7 +13,7 @@ COPY --chown=app:app ./requirements.txt requirements.txt
 RUN pip install --user --no-cache-dir -r requirements.txt
 ENV PATH="/home/app/.local/bin:${PATH}"
 
-COPY ./shortener /home/app/shortener
+COPY --chown=app:app ./shortener /home/app/shortener
 
 EXPOSE 8000
 
