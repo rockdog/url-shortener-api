@@ -2,6 +2,8 @@ FROM python:3.8.14-alpine
 
 LABEL org.opencontainers.image.authors="sven.steinheisser@gmail.com"
 
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
+
 RUN adduser -D app
 USER app
 WORKDIR /home/app
